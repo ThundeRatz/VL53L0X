@@ -13,6 +13,12 @@ mkdir lib
 ```
 E adicione o submódulo fazendo:
 
+* Com HTTPS:
+```bash
+git submodule add --name VL53L0X https://github.com/ThundeRatz/VL53L0X.git lib/VL53L0X
+```
+
+* Com SSH:
 ```bash
 git submodule add --name VL53L0X git@github.com:ThundeRatz/VL53L0X.git lib/VL53L0X
 ```
