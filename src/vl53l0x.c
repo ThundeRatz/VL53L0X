@@ -197,25 +197,25 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
     return status;
 }
 
-void vl53l0x_turn_off(VL53L0X_Dev_t* device) {
-    HAL_GPIO_WritePin(device->xshut_port, device->xshut_pin, GPIO_PIN_RESET);
+void vl53l0x_turn_off(VL53L0X_Dev_t* p_device) {
+    HAL_GPIO_WritePin(p_device->xshut_port, p_device->xshut_pin, GPIO_PIN_RESET);
 }
 
-void vl53l0x_turn_on(VL53L0X_Dev_t* device) {
-    HAL_GPIO_WritePin(device->xshut_port, device->xshut_pin, GPIO_PIN_SET);
+void vl53l0x_turn_on(VL53L0X_Dev_t* p_device) {
+    HAL_GPIO_WritePin(p_device->xshut_port, p_device->xshut_pin, GPIO_PIN_SET);
 }
 
-VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* device) {
+VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device) {
     VL53L0X_Error status = -3;
     uint16_t byte = 0x0000;
     uint16_t loopCounter = 0;
 
-    vl53l0x_turn_on(device);
+    vl53l0x_turn_on(p_device);
 
     while (loopCounter < 2000)
     {
         mcu_sleep(0); // SEM ESSE DELAY NÃO FUNCIONA
-        status = VL53L0X_RdWord(device,
+        status = VL53L0X_RdWord(p_device,
                                 VL53L0X_REG_IDENTIFICATION_MODEL_ID, &byte);
 
         if (byte == 0xEEAA)
