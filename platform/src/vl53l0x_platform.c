@@ -92,37 +92,6 @@ uint8_t i2c_global_buffer[VL53L0X_MAX_I2C_XFER_SIZE];
 #define VL53L0X_GetI2CAccess(Dev) /* todo mutex acquire */
 #define VL53L0X_DoneI2CAcces(Dev) /* todo mutex release */
 
-VL53L0X_Error VL53L0X_TurnOff(VL53L0X_DEV Dev) {
-    HAL_GPIO_WritePin(Dev->xshut_port, Dev->xshut_pin, GPIO_PIN_RESET);
-    return VL53L0X_ERROR_NONE;
-}
-
-VL53L0X_Error VL53L0X_TurnOn(VL53L0X_DEV Dev) {
-    HAL_GPIO_WritePin(Dev->xshut_port, Dev->xshut_pin, GPIO_PIN_SET);
-    return VL53L0X_ERROR_NONE;
-}
-
-VL53L0X_Error VL53L0X_TurnOn_WaitBoot(VL53L0X_DEV Dev) {
-    VL53L0X_Error Status = -3;
-    uint16_t Byte = 0x0000;
-    uint16_t loopCounter = 0;
-
-    VL53L0X_TurnOn(Dev);
-
-    while (loopCounter < 2000) {
-        mcu_sleep(0); // SEM ESSE DELAY NÃO FUNCIONA, NEM SE BOTAR ELE EMBAIXO, PQ???
-        Status = VL53L0X_RdWord(Dev,
-                                VL53L0X_REG_IDENTIFICATION_MODEL_ID, &Byte);
-
-        if (Byte == 0xEEAA) {
-            break;
-        }
-
-        loopCounter++;
-    }
-
-    return Status;
-}
 
 VL53L0X_Error VL53L0X_WriteMulti(VL53L0X_DEV Dev, uint8_t index, uint8_t*    pdata, uint32_t count) {
     VL53L0X_Error Status = VL53L0X_ERROR_NONE;

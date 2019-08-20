@@ -113,15 +113,6 @@ typedef VL53L0X_Dev_t* VL53L0X_DEV;
  */
 
 
-// Tem como ver error nessas duas funções??
-VL53L0X_Error VL53L0X_TurnOff(VL53L0X_DEV Dev);
-
-VL53L0X_Error VL53L0X_TurnOn(VL53L0X_DEV Dev);
-
-//TODO: Implementar de melhor, principalmente parte de esperar ligar
-VL53L0X_Error VL53L0X_TurnOn_WaitBoot (VL53L0X_DEV Dev);
-
-
 /**
  * Writes the supplied byte buffer to the device
  * @param   Dev       Device Handle
