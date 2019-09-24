@@ -32,16 +32,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "vl53l0x_def.h"
 #include "vl53l0x_platform_log.h"
-#include "vl53l0x_i2c_platform.h"
-
 
 #include "gpio.h"
 #include "i2c.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdint.h>
+#include <stdarg.h>
+
+/**
+ * @brief Typedef defining 8 bit unsigned char type.\n
+ * The developer shoud modify this to suit the platform being deployed.
+ *
+ */
+
+#ifndef bool_t
+typedef unsigned char bool_t;
+#endif
+
+
+#define	   I2C                0x01
+#define	   SPI                0x00
+
+#define    COMMS_BUFFER_SIZE    64  // MUST be the same size as the SV task buffer
+
+#define    BYTES_PER_WORD        2
+#define    BYTES_PER_DWORD       4
+
+#define    VL53L0X_MAX_STRING_LENGTH_PLT       256
 
 /**
  * @file vl53l0x_platform.h
