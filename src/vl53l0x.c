@@ -16,7 +16,7 @@
  * Private Constants
  *****************************************/
 
-#define FILTER_VALUE 0.4
+#define FILTER_VALUE 0.8
 
 /*****************************************
  * Public Functions Bodies Definitions
@@ -162,36 +162,34 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
         return status;
     }
 
-    switch (p_ranging_data->RangeStatus) {
-        case 0: // TUDO OKAY
-            (*range) = (p_ranging_data->RangeMilliMeter) * FILTER_VALUE + (1 - FILTER_VALUE) * (*range);
-            break;
+    uint8_t range_status = p_ranging_data->RangeStatus; // TERMINAR A ANALISE DO STATUS
 
-        case 4: // PHASE FAIL
-            // Melhor não fazer nada e apenas usar a leitura anterior do sensor
-            // Warning???
-            break;
+    if (range_status == 0) { //TUDO OKAY
+        (*range) = (p_ranging_data->RangeMilliMeter) * FILTER_VALUE + (1 - FILTER_VALUE) * (*range);
 
-        case 5: // HARDWARE FAIL
-            (*range) = max_range;
-
-            // DESABILITAR O SENSOR???
-            break;
-
+    } else if (range_status == 1) { //SIGMA FAIL
+        (*range) = (p_ranging_data->RangeMilliMeter) * 0.2 + (1 - 0.2) * (*range);
+    } else if (range_status == 4) { //PHASE FAIL
+        //Melhor não fazer nada?
+    } else if (range_status == 5) { //HARDWARE FAIL
+        (*range) = max_range;
+        //Desabilitar o sensor?
+    } else {
         /*
          * 1 - SIGMA FAIL
          * 2 - SIGNAL FAIL
          * 3 - MIN RANGE FAIL
          */
-        default:
-            (*range) = (p_ranging_data->RangeMilliMeter) * FILTER_VALUE + (1 - FILTER_VALUE) * (*range);
-
-            // FAZER ALGUM TIPO DE WARNING?
+        (*range) = (p_ranging_data->RangeMilliMeter) * 0.4 + (1 - 0.4) * (*range);
     }
-    status = p_ranging_data->RangeStatus; // TERMINAR A ANALISE DO STATUS
+
 
     if ((*range) > max_range) {
         (*range) = max_range;
+    }
+
+    if (status == 0) {
+        status = range_status;
     }
 
     return status;
