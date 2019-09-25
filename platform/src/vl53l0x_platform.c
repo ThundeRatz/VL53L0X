@@ -40,12 +40,6 @@
 #include "vl53l0x_api.h"
 #include "mcu.h"
 
-#if defined STM32G0
-#include "stm32g0xx_hal.h"
-#elif defined STM32F3
-#include "stm32f3xx_hal.h"
-#endif
-
 #define I2C_TIMEOUT_FIX_MS (10)
 #define I2C_TIMEOUT_PER_BYTE_MS (1)
 #define I2C_TIMEOUT_MS(count) (I2C_TIMEOUT_FIX_MS + (count) * I2C_TIMEOUT_PER_BYTE_MS)
@@ -227,10 +221,4 @@ VL53L0X_Error VL53L0X_RdDWord(VL53L0X_DEV Dev, uint8_t index, uint32_t*   data) 
     return Status;
 }
 
-#define VL53L0X_POLLINGDELAY_LOOPNB 250
-
-VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev) {
-    VL53L0X_Error status = VL53L0X_ERROR_NONE;
-    mcu_sleep(VL53L0X_POLLINGDELAY_LOOPNB);
-    return status;
-}
+__weak VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev);

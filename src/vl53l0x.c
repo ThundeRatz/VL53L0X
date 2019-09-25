@@ -176,7 +176,6 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
         //Desabilitar o sensor?
     } else {
         /*
-         * 1 - SIGMA FAIL
          * 2 - SIGNAL FAIL
          * 3 - MIN RANGE FAIL
          */

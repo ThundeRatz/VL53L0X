@@ -64,6 +64,8 @@ typedef unsigned char bool_t;
 
 #define    VL53L0X_MAX_STRING_LENGTH_PLT       256
 
+#define VL53L0X_POLLINGDELAY_LOOPNB 250
+
 /**
  * @file vl53l0x_platform.h
  *
