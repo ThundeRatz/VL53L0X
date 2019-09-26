@@ -25,9 +25,9 @@ git submodule add --name VL53L0X git@github.com:ThundeRatz/VL53L0X.git lib/VL53L
 
 ## Utilizando a biblioteca
 
-A seguinte função deve ser implementada pelo usuário. Ela deve implementar um delay de tamanho `VL53L0X_POLLINGDELAY_LOOPNB`, constante definida em milisegundos no arquivo [vl53l0x_platform.h](platform/inc/vl53l0x_platform.h)
+A seguinte função deve ser implementada pelo usuário. Ela deve implementar um delay que será usado na biblioteca
 ```C
-VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev);
+VL53L0X_Error VL53L0X_Delay(uint32_t ms);
 ```
 
 

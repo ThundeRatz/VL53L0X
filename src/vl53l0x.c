@@ -7,10 +7,7 @@
  */
 
 #include "vl53l0x.h"
-#include "mcu.h"
-
 #include "gpio.h"
-#include "i2c.h"
 
 /*****************************************
  * Private Constants
@@ -211,7 +208,7 @@ VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device) {
 
     while (loopCounter < 2000)
     {
-        mcu_sleep(0); // SEM ESSE DELAY NÃO FUNCIONA
+        VL53L0X_Delay(0); // SEM ESSE DELAY NÃO FUNCIONA
         status = VL53L0X_RdWord(p_device,
                                 VL53L0X_REG_IDENTIFICATION_MODEL_ID, &byte);
 

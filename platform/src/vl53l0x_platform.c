@@ -38,7 +38,6 @@
 
 #include "vl53l0x_platform.h"
 #include "vl53l0x_api.h"
-#include "mcu.h"
 
 #define I2C_TIMEOUT_FIX_MS (10)
 #define I2C_TIMEOUT_PER_BYTE_MS (1)
@@ -221,4 +220,10 @@ VL53L0X_Error VL53L0X_RdDWord(VL53L0X_DEV Dev, uint8_t index, uint32_t*   data) 
     return Status;
 }
 
-__weak VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev);
+#define VL53L0X_POLLINGDELAY_LOOPNB 250
+
+VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev) {
+    return VL53L0X_Delay(VL53L0X_POLLINGDELAY_LOOPNB);
+}
+
+__weak VL53L0X_Error VL53L0X_Delay(uint32_t ms);

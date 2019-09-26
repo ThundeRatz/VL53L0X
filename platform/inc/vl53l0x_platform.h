@@ -64,8 +64,6 @@ typedef unsigned char bool_t;
 
 #define    VL53L0X_MAX_STRING_LENGTH_PLT       256
 
-#define VL53L0X_POLLINGDELAY_LOOPNB 250
-
 /**
  * @file vl53l0x_platform.h
  *
@@ -248,6 +246,8 @@ VL53L0X_Error VL53L0X_UpdateByte(VL53L0X_DEV Dev, uint8_t index, uint8_t AndData
  * @return  "Other error code"    See ::VL53L0X_Error
  */
 VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev); /* usually best implemented as a real function */
+
+VL53L0X_Error VL53L0X_Delay(uint32_t ms);
 
 /** @} end of VL53L0X_platform_group */
 
