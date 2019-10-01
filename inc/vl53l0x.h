@@ -16,7 +16,7 @@
  * Public Constants
  *****************************************/
 
-#define VL53L0X_DEFAULT_COMM_SPEED 100 // SE TROCAR, TEM QUE TROCAR NO CUBE
+#define VL53L0X_DEFAULT_COMM_SPEED 100 // Hz
 #define VL53L0X_DEFAULT_ADDRESS 0x52
 
 /*****************************************
@@ -34,25 +34,22 @@ typedef struct _calibration_data  {
  * Public Functions Prototypes
  *****************************************/
 
-//TODO: selecão entre o modos de operação do dispoitivo
-VL53L0X_Error vl53l0x_init(VL53L0X_DEV pMyDevice, VL53L0X_DeviceInfo_t DeviceInfo,
-                        vl53l0x_calibration_data_t calibration);
+VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_info,
+                           vl53l0x_calibration_data_t calibration);
 
 
-//TODO: Terminar a análise do RangeStatus fornecido pela API
-uint8_t vl53l0x_update_range(VL53L0X_Dev_t* pMyDevice, VL53L0X_RangingMeasurementData_t *pRangingData,
-                        uint16_t* range, uint16_t max_range);
+uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurementData_t* p_ranging_data,
+                            uint16_t* range, uint16_t max_range);
 
 
-void vl53l0x_turn_off(VL53L0X_DEV Dev);
+void vl53l0x_turn_off(VL53L0X_Dev_t* p_device);
 
-void vl53l0x_turn_on(VL53L0X_DEV Dev);
+void vl53l0x_turn_on(VL53L0X_Dev_t* p_device);
 
-//TODO: Implementar de melhor, principalmente parte de esperar ligar
-VL53L0X_Error vl53l0x_wait_boot(VL53L0X_DEV Dev);
+VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device);
 
-uint8_t check_API_status(); //TODO
+uint8_t check_API_status(); //NOT IMPLEMENTED YET
 
-uint8_t vl53l0x_reinit(); //TODO
+uint8_t vl53l0x_reinit(); //NOT IMPLEMENTED YET
 
 #endif

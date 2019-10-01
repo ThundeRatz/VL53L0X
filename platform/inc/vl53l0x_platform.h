@@ -44,7 +44,7 @@ extern "C" {
 #include <stdarg.h>
 
 /**
- * @brief Typedef defining 8 bit unsigned char type.\n
+ * @brief Typedef defining 8 bit unsigned char type.
  * The developer shoud modify this to suit the platform being deployed.
  *
  */
