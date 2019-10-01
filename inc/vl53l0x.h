@@ -16,7 +16,6 @@
  * Public Constants
  *****************************************/
 
-#define VL53L0X_DEFAULT_COMM_SPEED 100 // Hz
 #define VL53L0X_DEFAULT_ADDRESS 0x52
 
 /*****************************************
