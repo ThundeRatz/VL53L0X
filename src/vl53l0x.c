@@ -142,6 +142,7 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
 uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurementData_t* p_ranging_data,
                             uint16_t* range, uint16_t max_range) {
     uint8_t status = 0;
+    uint16_t aux_range = *range;
     status = VL53L0X_GetRangingMeasurementData(p_device, p_ranging_data);
 
     if (status != VL53L0X_ERROR_NONE) {
@@ -151,26 +152,24 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
     uint8_t range_status = p_ranging_data->RangeStatus; // TERMINAR A ANALISE DO STATUS
 
     if (range_status == 0) { //VALID RANGE
-        (*range) = (p_ranging_data->RangeMilliMeter) * VALID_RANGE_FILTER + (1 - VALID_RANGE_FILTER) * (*range);
+        aux_range = (p_ranging_data->RangeMilliMeter) * VALID_RANGE_FILTER + (1 - VALID_RANGE_FILTER) * aux_range;
 
     } else if (range_status == 1) { //SIGMA FAIL
-        (*range) = (p_ranging_data->RangeMilliMeter) * SIGMA_FAIL_FILTER + (1 - SIGMA_FAIL_FILTER) * (*range);
+        aux_range = (p_ranging_data->RangeMilliMeter) * SIGMA_FAIL_FILTER + (1 - SIGMA_FAIL_FILTER) * aux_range;
     } else if (range_status == 4) { //PHASE FAIL
 
     } else if (range_status == 5) { //HARDWARE FAIL
-        (*range) = max_range;
+        aux_range = max_range;
     } else {
         /*
          * 2 - SIGNAL FAIL
          * 3 - MIN RANGE FAIL
          */
-        (*range) = (p_ranging_data->RangeMilliMeter) * DAFAULT_FILTER + (1 - DAFAULT_FILTER) * (*range);
+        aux_range = (p_ranging_data->RangeMilliMeter) * DAFAULT_FILTER + (1 - DAFAULT_FILTER) * aux_range;
     }
 
 
-    if ((*range) > max_range) {
-        (*range) = max_range;
-    }
+    *range = min(aux_range, max_range);
 
     if (status == 0) {
         status = range_status;
