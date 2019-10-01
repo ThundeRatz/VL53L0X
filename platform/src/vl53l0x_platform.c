@@ -144,8 +144,8 @@ VL53L0X_Error VL53L0X_WrWord(VL53L0X_DEV Dev, uint8_t index, uint16_t data) {
     uint8_t buffer[BYTES_PER_WORD];
 
     // Split 16-bit word into MS and LS uint8_t
-    buffer[0] = (uint8_t) (data >> 8);
-    buffer[1] = (uint8_t) (data & 0x00FF);
+    buffer[0] = (uint8_t) ((data >> 8) & 0xFF);
+    buffer[1] = (uint8_t) (data & 0xFF);
 
     if (index % 2 == 1) {
         Status = VL53L0X_WriteMulti(Dev, index, &buffer[0], BYTES_PER_WORD);
@@ -164,10 +164,10 @@ VL53L0X_Error VL53L0X_WrDWord(VL53L0X_DEV Dev, uint8_t index, uint32_t data) {
     uint8_t buffer[BYTES_PER_DWORD];
 
     // Split 32-bit word into MS ... LS bytes
-    buffer[0] = (uint8_t) (data >> 24);
-    buffer[1] = (uint8_t) ((data & 0x00FF0000) >> 16);
-    buffer[2] = (uint8_t) ((data & 0x0000FF00) >> 8);
-    buffer[3] = (uint8_t) (data & 0x000000FF);
+    buffer[0] = (uint8_t) ((data >> 24) & 0xFF);
+    buffer[1] = (uint8_t) ((data >> 16) & 0xFF);
+    buffer[2] = (uint8_t) ((data >> 8) & 0xFF);
+    buffer[3] = (uint8_t) (data & 0xFF);
 
     Status = VL53L0X_WriteMulti(Dev, index, buffer, BYTES_PER_DWORD);
 
