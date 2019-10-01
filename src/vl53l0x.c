@@ -13,7 +13,15 @@
  * Private Constants
  *****************************************/
 
-#define FILTER_VALUE 0.8
+#define SIGMA_LIMIT_VALUE 18 // mm
+#define SIGNAL_RATE_LIMIT_VALUE 0.25 // Mcps
+#define MEASUREMENT_TIME_BUDGET 50000 // us
+#define PRE_RANGE_PULSE_PERIOD 18 // Must be between 12 and 18
+#define FINAL_RANGE_PULSE_PERIOD 14 // Must be between 8 and 14
+
+#define VALID_RANGE_FILTER 0.8
+#define SIGMA_FAIL_FILTER 0.2
+#define DAFAULT_FILTER 0.4
 
 /*****************************************
  * Public Functions Bodies Definitions
@@ -72,7 +80,6 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
         }
     }
 
-
     if (Status == VL53L0X_ERROR_NONE)
     {
         Status = VL53L0X_SetDeviceMode(p_device, VL53L0X_DEVICEMODE_CONTINUOUS_RANGING); // Setup in single ranging mode
@@ -91,56 +98,38 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
                                              VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1);
     }
 
-    /*
- *  if (Status == VL53L0X_ERROR_NONE) {
- *      Status = VL53L0X_SetLimitCheckEnable(p_device,
- *              VL53L0X_CHECKENABLE_RANGE_IGNORE_THRESHOLD, 1);
- *  }
- * //*/
-
     // Set Values
     if (Status == VL53L0X_ERROR_NONE)
     {
         Status = VL53L0X_SetLimitCheckValue(p_device,
                                             VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE,
-                                            (FixPoint1616_t)(18 * 65536)); // Default: 18mm
+                                            (FixPoint1616_t)(SIGMA_LIMIT_VALUE * (1 << 16)));
     }
 
     if (Status == VL53L0X_ERROR_NONE)
     {
         Status = VL53L0X_SetLimitCheckValue(p_device,
                                             VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE,
-                                            (FixPoint1616_t)(0.25 * 65536)); // Default: 0.25 Mcps
+                                            (FixPoint1616_t)(SIGNAL_RATE_LIMIT_VALUE * (1 << 16)));
     }
-
-    /*
- *  if (Status == VL53L0X_ERROR_NONE) {
- *      Status = VL53L0X_SetLimitCheckValue(p_device,
- *              VL53L0X_CHECKENABLE_RANGE_IGNORE_THRESHOLD,
- *              (FixPoint1616_t)(1.5*0.023*65536));
- *  }
- * //*/
 
     if (Status == VL53L0X_ERROR_NONE)
     {
-        Status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(p_device,
-                                                                50000); // Default: 33000us
-    }
-
-    // *
-    if (Status == VL53L0X_ERROR_NONE)
-    {
-        Status = VL53L0X_SetVcselPulsePeriod(p_device,
-                                             VL53L0X_VCSEL_PERIOD_PRE_RANGE, 18); // tem que ser entre 12 e 18
+        Status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(p_device, MEASUREMENT_TIME_BUDGET);
     }
 
     if (Status == VL53L0X_ERROR_NONE)
     {
         Status = VL53L0X_SetVcselPulsePeriod(p_device,
-                                             VL53L0X_VCSEL_PERIOD_FINAL_RANGE, 14); // tem q ser entre 8 e 14
+                                             VL53L0X_VCSEL_PERIOD_PRE_RANGE, PRE_RANGE_PULSE_PERIOD);
     }
 
-    // */
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetVcselPulsePeriod(p_device,
+                                             VL53L0X_VCSEL_PERIOD_FINAL_RANGE, FINAL_RANGE_PULSE_PERIOD);
+    }
+
 
     if (Status == VL53L0X_ERROR_NONE)
     {
@@ -161,22 +150,21 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
 
     uint8_t range_status = p_ranging_data->RangeStatus; // TERMINAR A ANALISE DO STATUS
 
-    if (range_status == 0) { //TUDO OKAY
-        (*range) = (p_ranging_data->RangeMilliMeter) * FILTER_VALUE + (1 - FILTER_VALUE) * (*range);
+    if (range_status == 0) { //VALID RANGE
+        (*range) = (p_ranging_data->RangeMilliMeter) * VALID_RANGE_FILTER + (1 - VALID_RANGE_FILTER) * (*range);
 
     } else if (range_status == 1) { //SIGMA FAIL
-        (*range) = (p_ranging_data->RangeMilliMeter) * 0.2 + (1 - 0.2) * (*range);
+        (*range) = (p_ranging_data->RangeMilliMeter) * SIGMA_FAIL_FILTER + (1 - SIGMA_FAIL_FILTER) * (*range);
     } else if (range_status == 4) { //PHASE FAIL
-        //Melhor não fazer nada?
+
     } else if (range_status == 5) { //HARDWARE FAIL
         (*range) = max_range;
-        //Desabilitar o sensor?
     } else {
         /*
          * 2 - SIGNAL FAIL
          * 3 - MIN RANGE FAIL
          */
-        (*range) = (p_ranging_data->RangeMilliMeter) * 0.4 + (1 - 0.4) * (*range);
+        (*range) = (p_ranging_data->RangeMilliMeter) * DAFAULT_FILTER + (1 - DAFAULT_FILTER) * (*range);
     }
 
 
@@ -208,7 +196,7 @@ VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device) {
 
     while (loopCounter < 2000)
     {
-        VL53L0X_Delay(0); // SEM ESSE DELAY NÃO FUNCIONA
+        VL53L0X_Delay(0);
         status = VL53L0X_RdWord(p_device,
                                 VL53L0X_REG_IDENTIFICATION_MODEL_ID, &byte);
 
