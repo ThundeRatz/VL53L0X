@@ -210,6 +210,3 @@ VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device) {
 
     return status;
 }
-
-// TODO: conferir API State quando tira o xshut
-// PALDevDataGet(Dev, PalState)
