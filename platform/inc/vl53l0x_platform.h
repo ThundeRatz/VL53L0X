@@ -32,16 +32,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "vl53l0x_def.h"
 #include "vl53l0x_platform_log.h"
-#include "vl53l0x_i2c_platform.h"
-
 
 #include "gpio.h"
 #include "i2c.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdint.h>
+#include <stdarg.h>
+
+/**
+ * @brief Typedef defining 8 bit unsigned char type.
+ * The developer shoud modify this to suit the platform being deployed.
+ *
+ */
+
+#ifndef bool_t
+typedef unsigned char bool_t;
+#endif
+
+
+#define	   I2C                0x01
+#define	   SPI                0x00
+
+#define    COMMS_BUFFER_SIZE    64  // MUST be the same size as the SV task buffer
+
+#define    BYTES_PER_WORD        2
+#define    BYTES_PER_DWORD       4
+
+#define    VL53L0X_MAX_STRING_LENGTH_PLT       256
 
 /**
  * @file vl53l0x_platform.h
@@ -111,15 +132,6 @@ typedef VL53L0X_Dev_t* VL53L0X_DEV;
  * @brief    PAL Register Access Functions
  *  @{
  */
-
-
-// Tem como ver error nessas duas funções??
-VL53L0X_Error VL53L0X_TurnOff(VL53L0X_DEV Dev);
-
-VL53L0X_Error VL53L0X_TurnOn(VL53L0X_DEV Dev);
-
-//TODO: Implementar de melhor, principalmente parte de esperar ligar
-VL53L0X_Error VL53L0X_TurnOn_WaitBoot (VL53L0X_DEV Dev);
 
 
 /**
@@ -234,6 +246,8 @@ VL53L0X_Error VL53L0X_UpdateByte(VL53L0X_DEV Dev, uint8_t index, uint8_t AndData
  * @return  "Other error code"    See ::VL53L0X_Error
  */
 VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev); /* usually best implemented as a real function */
+
+VL53L0X_Error VL53L0X_Delay(uint32_t ms);
 
 /** @} end of VL53L0X_platform_group */
 
