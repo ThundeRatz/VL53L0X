@@ -24,13 +24,15 @@
  * Private Constants
  *****************************************/
 
-#define SIGMA_LIMIT_VALUE 18          /**< Value in mm */
-#define SIGNAL_RATE_LIMIT_VALUE 0.25  /**< Value in Mcps */
-#define MEASUREMENT_TIME_BUDGET 50000 /**< Value in us */
+#define SIGMA_LIMIT_VALUE_MM 18
+#define SIGNAL_RATE_LIMIT_VALUE_MCPS 0.25
+#define MEASUREMENT_TIME_BUDGET_US 50000
 #define PRE_RANGE_PULSE_PERIOD 18     /**< Must be between 12 and 18 */
 #define FINAL_RANGE_PULSE_PERIOD 14   /**< Must be between 8 and 14 */
 
-/** Filter values, depending on range status */
+/**
+ * @brief Filter values, depending on range status
+ */
 #define VALID_RANGE_FILTER 0.8
 #define SIGMA_FAIL_FILTER 0.2
 #define DAFAULT_FILTER 0.4
@@ -105,17 +107,17 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
     if (Status == VL53L0X_ERROR_NONE) {
         Status = VL53L0X_SetLimitCheckValue(p_device,
                                             VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE,
-                                            (FixPoint1616_t) (SIGMA_LIMIT_VALUE * (1 << 16)));
+                                            (FixPoint1616_t) (SIGMA_LIMIT_VALUE_MM * (1 << 16)));
     }
 
     if (Status == VL53L0X_ERROR_NONE) {
         Status = VL53L0X_SetLimitCheckValue(p_device,
                                             VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE,
-                                            (FixPoint1616_t) (SIGNAL_RATE_LIMIT_VALUE * (1 << 16)));
+                                            (FixPoint1616_t) (SIGNAL_RATE_LIMIT_VALUE_MCPS * (1 << 16)));
     }
 
     if (Status == VL53L0X_ERROR_NONE) {
-        Status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(p_device, MEASUREMENT_TIME_BUDGET);
+        Status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(p_device, MEASUREMENT_TIME_BUDGET_US);
     }
 
     if (Status == VL53L0X_ERROR_NONE) {
@@ -152,7 +154,7 @@ VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device) {
     vl53l0x_turn_on(p_device);
 
     while (loopCounter < 2000) {
-        /** It doesn't work without a delay, even 0 */
+        /* It doesn't work without a delay, even using 0 */
         VL53L0X_Delay(0);
         status = VL53L0X_RdWord(p_device,
                                 VL53L0X_REG_IDENTIFICATION_MODEL_ID, &byte);
@@ -179,22 +181,17 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
 
     uint8_t range_status = p_ranging_data->RangeStatus;
 
-    if (range_status == 0) {
-        /** VALID RANGE */
+    if (range_status == 0) {  // VALID RANGE
         aux_range = (p_ranging_data->RangeMilliMeter) * VALID_RANGE_FILTER + (1 - VALID_RANGE_FILTER) * aux_range;
-    } else if (range_status == 1) {
-        /** SIGMA FAIL */
+    } else if (range_status == 1) {  // SIGMA FAIL
         aux_range = (p_ranging_data->RangeMilliMeter) * SIGMA_FAIL_FILTER + (1 - SIGMA_FAIL_FILTER) * aux_range;
-    } else if (range_status == 4) {
-        /** PHASE FAIL */
-    } else if (range_status == 5) {
-        /** HARDWARE FAIL */
+    } else if (range_status == 4) {  // PHASE FAIL
+        // In this case, aux_range will not be updated, because the reading is mostly random when this erro occurs
+    } else if (range_status == 5) {  // HARDWARE FAIL
         aux_range = max_range;
     } else {
-        /*
-         * 2 - SIGNAL FAIL
-         * 3 - MIN RANGE FAIL
-         */
+        // 2 - SIGNAL FAIL
+        // 3 - MIN RANGE FAIL
         aux_range = (p_ranging_data->RangeMilliMeter) * DAFAULT_FILTER + (1 - DAFAULT_FILTER) * aux_range;
     }
 
