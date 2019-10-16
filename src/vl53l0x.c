@@ -45,7 +45,7 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
                            vl53l0x_calibration_data_t calibration) {
     VL53L0X_Error Status = VL53L0X_ERROR_NONE;
 
-    /** Data initialization */
+    /* Data initialization */
     Status = VL53L0X_DataInit(p_device);
 
     if (Status == VL53L0X_ERROR_NONE) {
@@ -59,12 +59,12 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
     }
 
     if (Status == VL53L0X_ERROR_NONE) {
-        /** Device Initialization */
+        /* Device Initialization */
         Status = VL53L0X_StaticInit(p_device);
     }
 
     if (p_device->calibrated) {
-        /** Load de calibration data */
+        /* Load de calibration data */
         if (Status == VL53L0X_ERROR_NONE) {
             Status = VL53L0X_SetReferenceSpads(p_device,
                                                calibration.refSpadCount, calibration.isApertureSpads);
@@ -75,7 +75,7 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
                                                calibration.VhvSettings, calibration.PhaseCal);
         }
     } else {
-        /** Device calibration */
+        /* Device calibration */
         if (Status == VL53L0X_ERROR_NONE) {
             Status =
                 VL53L0X_PerformRefSpadManagement(p_device, &(calibration.refSpadCount),
@@ -88,11 +88,11 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
     }
 
     if (Status == VL53L0X_ERROR_NONE) {
-        /** Device default is single ranging mode */
+        /* Device default is single ranging mode */
         Status = VL53L0X_SetDeviceMode(p_device, VL53L0X_DEVICEMODE_CONTINUOUS_RANGING);
     }
 
-    /** Enable Sigma Signal and Threshold check */
+    /* Enable Sigma Signal and Threshold check */
     if (Status == VL53L0X_ERROR_NONE) {
         Status = VL53L0X_SetLimitCheckEnable(p_device,
                                              VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1);
@@ -103,7 +103,7 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
                                              VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1);
     }
 
-    /** Set Values */
+    /* Set Values */
     if (Status == VL53L0X_ERROR_NONE) {
         Status = VL53L0X_SetLimitCheckValue(p_device,
                                             VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE,
@@ -130,7 +130,7 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
                                              VL53L0X_VCSEL_PERIOD_FINAL_RANGE, FINAL_RANGE_PULSE_PERIOD);
     }
 
-    /** Start reading */
+    /* Start reading */
     if (Status == VL53L0X_ERROR_NONE) {
         Status = VL53L0X_StartMeasurement(p_device);
     }
@@ -186,7 +186,7 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
     } else if (range_status == 1) {  // SIGMA FAIL
         aux_range = (p_ranging_data->RangeMilliMeter) * SIGMA_FAIL_FILTER + (1 - SIGMA_FAIL_FILTER) * aux_range;
     } else if (range_status == 4) {  // PHASE FAIL
-        // In this case, aux_range will not be updated, because the reading is mostly random when this erro occurs
+        /* In this case, aux_range will not be updated, because the reading is mostly random when this erro occurs */
     } else if (range_status == 5) {  // HARDWARE FAIL
         aux_range = max_range;
     } else {

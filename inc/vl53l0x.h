@@ -25,7 +25,7 @@
  *****************************************/
 
 /**
- * @brief Struct to storage the calibration data for one sensor, so the values can be reloaded after reboot
+ * @brief Struct to store the calibration data for one sensor
  */
 typedef struct _calibration_data {
     uint32_t refSpadCount;
