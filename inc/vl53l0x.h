@@ -8,8 +8,8 @@
  * @date 10/2019
  */
 
-#ifndef VL53L0X_H
-#define VL53L0X_H
+#ifndef __VL53L0X_H__
+#define __VL53L0X_H__
 
 #include "vl53l0x_api.h"
 #include "vl53l0x_platform.h"
@@ -99,4 +99,4 @@ uint8_t check_API_status();  // NOT IMPLEMENTED YET
 
 uint8_t vl53l0x_reinit();  // NOT IMPLEMENTED YET
 
-#endif // VL53L0X_H
+#endif // __VL53L0X_H__
