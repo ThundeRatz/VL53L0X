@@ -24,9 +24,9 @@
  * Private Constants
  *****************************************/
 
-#define SIGMA_LIMIT_VALUE_MM 18
-#define SIGNAL_RATE_LIMIT_VALUE_MCPS 0.25
-#define MEASUREMENT_TIME_BUDGET_US 50000
+#define SIGMA_LIMIT_VALUE_MM 60
+#define SIGNAL_RATE_LIMIT_VALUE_MCPS 0.1
+#define MEASUREMENT_TIME_BUDGET_US 40000
 #define PRE_RANGE_PULSE_PERIOD 18     // Must be between 12 and 18
 #define FINAL_RANGE_PULSE_PERIOD 14   // Must be between 8 and 14
 
@@ -153,7 +153,7 @@ VL53L0X_Error vl53l0x_wait_boot(VL53L0X_Dev_t* p_device) {
 
     vl53l0x_turn_on(p_device);
 
-    while (loopCounter < 2000) {
+    while (loopCounter < 400) {
         // It doesn't work without a delay, even using 0
         VL53L0X_Delay(0);
         status = VL53L0X_RdWord(p_device,
