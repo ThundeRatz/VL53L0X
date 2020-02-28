@@ -24,9 +24,9 @@
  * Private Constants
  *****************************************/
 
-#define SIGMA_LIMIT_VALUE_MM 25
-#define SIGNAL_RATE_LIMIT_VALUE_MCPS 0.2F
-#define MEASUREMENT_TIME_BUDGET_US 33000
+#define SIGMA_LIMIT_VALUE_MM 18
+#define SIGNAL_RATE_LIMIT_VALUE_MCPS 0.25F
+#define MEASUREMENT_TIME_BUDGET_US 50000
 #define PRE_RANGE_PULSE_PERIOD 18     // Must be between 12 and 18
 #define FINAL_RANGE_PULSE_PERIOD 14   // Must be between 8 and 14
 
