@@ -1,0 +1,11 @@
+set(VL53L0X_PATH
+    ./lib/VL53L0X
+)
+
+list(APPEND LIB_SOURCES
+    ${VL53L0X_PATH}/src/vl53l0X.c
+)
+
+list(APPEND LIB_INCLUDE_DIRECTORIES
+    ${VL53L0X_PATH}/inc
+)
