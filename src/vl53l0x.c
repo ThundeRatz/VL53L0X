@@ -130,6 +130,10 @@ VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t* p_device, VL53L0X_DeviceInfo_t device_
                                              VL53L0X_VCSEL_PERIOD_FINAL_RANGE, FINAL_RANGE_PULSE_PERIOD);
     }
 
+    VL53L0X_SetGpioConfig(p_device, 0, VL53L0X_DEVICEMODE_CONTINUOUS_RANGING, VL53L0X_GPIOFUNCTIONALITY_NEW_MEASURE_READY, VL53L0X_INTERRUPTPOLARITY_LOW);
+
+    VL53L0X_ClearInterruptMask(p_device, 0);
+
     // Start reading
     if (Status == VL53L0X_ERROR_NONE) {
         Status = VL53L0X_StartMeasurement(p_device);
@@ -174,6 +178,8 @@ uint8_t vl53l0x_update_range(VL53L0X_Dev_t* p_device, VL53L0X_RangingMeasurement
     uint8_t status = 0;
     uint16_t aux_range = *range;
     status = VL53L0X_GetRangingMeasurementData(p_device, p_ranging_data);
+
+    VL53L0X_ClearInterruptMask(p_device, 0);
 
     if (status != VL53L0X_ERROR_NONE) {
         return status;
